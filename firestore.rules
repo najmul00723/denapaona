@@ -1,0 +1,133 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function signedIn() {
+      return request.auth != null;
+    }
+
+    function ownsUserDocument(userId) {
+      return signedIn() && request.auth.uid == userId;
+    }
+
+    function validEntity(entityId) {
+      let data = request.resource.data;
+      return data.keys().hasOnly([
+          'id',
+          'type',
+          'name',
+          'phone',
+          'createdAt',
+          'updatedAt',
+          'reminderAt',
+          'reminderNote',
+          'reminderDone'
+        ])
+        && data.keys().hasAll([
+          'id',
+          'type',
+          'name',
+          'phone',
+          'createdAt',
+          'updatedAt',
+          'reminderDone'
+        ])
+        && data.id == entityId
+        && data.id is string
+        && data.type in ['shopDebt', 'generalDebt', 'receivable', 'amanot']
+        && data.name is string
+        && data.name.size() <= 160
+        && data.phone is string
+        && data.phone.size() <= 40
+        && data.createdAt is string
+        && data.updatedAt is string
+        && (!('reminderAt' in data) || data.reminderAt == null || data.reminderAt is string)
+        && (!('reminderNote' in data) || data.reminderNote is string)
+        && (!('reminderNote' in data) || data.reminderNote.size() <= 500)
+        && data.reminderDone is bool;
+    }
+
+    function validTransaction(transactionId) {
+      let data = request.resource.data;
+      return data.keys().hasOnly([
+          'id',
+          'entityId',
+          'type',
+          'description',
+          'amount',
+          'date',
+          'updatedAt',
+          'method',
+          'subItems'
+        ])
+        && data.keys().hasAll([
+          'id',
+          'entityId',
+          'type',
+          'description',
+          'amount',
+          'date',
+          'updatedAt',
+          'method',
+          'subItems'
+        ])
+        && data.id == transactionId
+        && data.id is string
+        && data.entityId is string
+        && data.type in ['debt', 'payment']
+        && data.description is string
+        && data.description.size() <= 500
+        && data.amount is number
+        && data.amount >= 0
+        && data.date is string
+        && data.updatedAt is string
+        && data.method is string
+        && data.method.size() <= 80
+        && data.subItems is list
+        && data.subItems.size() <= 200;
+    }
+
+    function validSnapshot(snapshotId) {
+      let data = request.resource.data;
+      return snapshotId == 'latest'
+        && data.keys().hasOnly(['entities', 'transactions', 'updatedAt'])
+        && data.keys().hasAll(['entities', 'transactions', 'updatedAt'])
+        && data.entities is list
+        && data.entities.size() <= 2000
+        && data.transactions is list
+        && data.transactions.size() <= 10000
+        && data.updatedAt is string;
+    }
+
+    match /users/{userId} {
+      allow read: if ownsUserDocument(userId);
+      allow write: if false;
+
+      match /entities/{entityId} {
+        allow read: if ownsUserDocument(userId);
+        allow create, update: if ownsUserDocument(userId) && validEntity(entityId);
+        allow delete: if ownsUserDocument(userId);
+      }
+
+      match /transactions/{transactionId} {
+        allow read: if ownsUserDocument(userId);
+        allow create, update: if ownsUserDocument(userId) && validTransaction(transactionId);
+        allow delete: if ownsUserDocument(userId);
+      }
+
+      match /snapshots/{snapshotId} {
+        allow read: if ownsUserDocument(userId);
+        allow create, update: if ownsUserDocument(userId) && validSnapshot(snapshotId);
+        allow delete: if false;
+      }
+
+      match /{document=**} {
+        allow read, write: if false;
+      }
+    }
+
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

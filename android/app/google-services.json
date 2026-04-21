@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "513514862867",
+    "project_id": "denapaona01",
+    "storage_bucket": "denapaona01.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:513514862867:android:ea084c47317cae99f702e6",
+        "android_client_info": {
+          "package_name": "com.najmul.denapaona"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "513514862867-dmfg7k8kkmqttqdjtd2tloavq9sovih6.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.najmul.denapaona",
+            "certificate_hash": "eca8c5ce8c9492dc2e38a57755364f43aa686ffb"
+          }
+        },
+        {
+          "client_id": "513514862867-7c92o172ia6m88fr325reicn0j7temmo.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDQcsEi7ls1f1nplOXzYcKyQ9KnoIxrcgA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "513514862867-7c92o172ia6m88fr325reicn0j7temmo.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
