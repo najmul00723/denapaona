@@ -4223,7 +4223,7 @@ ButtonStyle primaryButtonStyle() {
 }
 
 final NumberFormat _takaFormatter = NumberFormat.decimalPattern('en_US');
-final DateFormat _dateTextFormatter = DateFormat('dd MMM, yyyy');
+final DateFormat _dateTextFormatter = DateFormat('dd/MM/yyyy');
 
 String taka(double amount) {
   return '৳ ${_takaFormatter.format(amount.round())}';
